@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</head>
+<body class="bg-dark">
+    <h1 class="h1 text-center shadow  py-2  text-dark bg-warning">Movie Finder</h1>
+    <div class="container my-5">
+        <div class="row">
+            <div class=" col-2 col-md-4"></div>
+            <div class="col-8 col-md-4 p-3">
+                <form id="form">
+                    <input type="text" class="form-control" placeholder="Enter the Movie name" id="mname">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-warning my-3" onclick="displayMovieData()">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-2 col-md-4"></div>
+        </div>
+
+        <div class="row my-4">
+            <div class="col-1 col-md-1"></div>
+            <div class="col-11 col-md-3" id="section1">
+
+            </div>
+            <div class="col-12 col-md-8" id="section2">
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function displayMovieData() {
+            var movieName = mname.value;
+            
+            fetch(`https://www.omdbapi.com/?apikey=e4bf1ca5&t=${movieName}`)
+            .then(response => response.json())
+            .then(movieDetails => displayDetails(movieDetails))
+            
+            .catch(error => alert('failed to fetch movie details'));  
+        }
+            function displayDetails(movieDetails) { 
+                // MoviePoster = movieDetails.Poster; 
+                // MovieTitle = movieDetails.Title; 
+                movieData = `
+                <img src="${movieDetails.Poster}" alt="${movieDetails.Title} Image" class="text-light"></img>
+                `;
+                section1.innerHTML = movieData;
+                console.log(movieDetails);
+                Runtime = (movieDetails.Type === 'series')? `${movieDetails.Runtime}/episodes`: `${movieDetails.Runtime}`;
+
+                movieData2 = `
+                <h1 class="text-warning h1">${movieDetails.Title}</h1>
+                <div class="d-flex">
+                    <h4 class = 'text-light h4'>${movieDetails.Year}</h4>
+                    <span class = 'text-secondary mx-2 mt-1'>${movieDetails.Type} (${Runtime})</span>
+                    </div>
+                <div class="d-flex">
+                    <img width="40px" src="https://i.postimg.cc/6pKHfDS2/imdb.png"></img>
+                    <span class = 'm-1 text-secondary h6'>${movieDetails.imdbRating}/10</span>
+                </div>
+                <h6 class = 'text-light h5 my-2'>Genre : ${movieDetails.Genre}</h6>
+                <h6 class = 'text-light h5 my-2'>Language : ${movieDetails.Language}</h6>
+                <h6 class = 'text-light h5 my-2'>Release Date : ${movieDetails.Released}</h6>
+                <h6 class = 'text-light h5 my-2'>Director : ${movieDetails.Director}</h6>
+                <h6 class = 'text-light h5 my-2'>Writer : ${movieDetails.Writer}</h6>
+                <p class =  'text-light h5 my-2'>Plot : ${movieDetails.Plot}</p>
+                `
+                section2.innerHTML = movieData2;
+                form.reset();  
+             }
+    </script>
+</body>
+</html>
